@@ -6,18 +6,25 @@ public class PlayerMovement : MonoBehaviour
 {
     public CharacterController2D controller;
 
-    static public float runSpeed = 40f;
+    public float runSpeed = 80f;
 
-    float horizontalMove = 0f;
+    float horizontalMove = 1f;
+    bool jump = false;
 
     void Update()
     {
         horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
+
+        if (Input.GetButtonDown("Jump"))
+        {
+            jump = true;
+        }
     }
 
     void FixedUpdate()
     {
         //Move Character
-        controller.Move(horizontalMove * Time.fixedDeltaTime, false, false);
+        controller.Move(horizontalMove * Time.fixedDeltaTime, false, jump);
+        jump = false;
     }
 }
