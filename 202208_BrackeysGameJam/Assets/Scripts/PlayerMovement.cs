@@ -7,7 +7,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform m_WallCheck;
     public CharacterController2D controller;
 
-    public float runSpeed = 80f;
+    public float runSpeed = 40f;
     public float direction = 1f;
     const float k_WallCheckRadius = .1f;
 
@@ -32,9 +32,13 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Crouch"))
         {
             crouch = true;
+            m_WallCheck.position = new Vector2(m_WallCheck.position.x, m_WallCheck.position.y - 0.4f);
+
+
         } else if (Input.GetButtonUp("Crouch"))
         {
             crouch = false;
+            m_WallCheck.position = new Vector2(m_WallCheck.position.x, m_WallCheck.position.y + 0.4f);
         }
     }
 
@@ -43,5 +47,14 @@ public class PlayerMovement : MonoBehaviour
         //Move Character
         controller.Move(horizontalMove * Time.fixedDeltaTime, crouch, jump);
         jump = false;
+    }
+
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.gameObject.name == "Spikes")
+        {
+            Destroy(GameObject.Find("Player"));
+            Debug.Log("aua");
+        }
     }
 }
