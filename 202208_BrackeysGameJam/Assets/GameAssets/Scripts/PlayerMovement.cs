@@ -10,8 +10,8 @@ public class PlayerMovement : MonoBehaviour
     public Animator animator;
 
     public static float runSpeed = 40f;
-    public float slideSpeed = runSpeed * 3f;
-    public float movementSpeed = runSpeed;
+    private float slideSpeed = runSpeed * 1.5f;
+    private float movementSpeed = runSpeed;
     public float direction = 1f;
     const float k_WallCheckRadius = .1f;
 
