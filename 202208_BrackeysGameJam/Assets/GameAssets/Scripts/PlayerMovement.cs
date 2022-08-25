@@ -9,7 +9,9 @@ public class PlayerMovement : MonoBehaviour
     public CharacterController2D controller;
     public Animator animator;
 
-    public float runSpeed = 40f;
+    public static float runSpeed = 40f;
+    private float slideSpeed = runSpeed * 1.5f;
+    private float movementSpeed = runSpeed;
     public float direction = 1f;
     const float k_WallCheckRadius = .1f;
 
@@ -18,13 +20,14 @@ public class PlayerMovement : MonoBehaviour
     bool jump = false;
     bool crouch = false;
 
+
     void Update()
     {
         if (Physics2D.OverlapCircle(m_WallCheck.position, k_WallCheckRadius, controller.m_WhatIsGround))
         {
             direction = direction * -1f;
         }
-        horizontalMove = direction * runSpeed;
+        horizontalMove = direction * movementSpeed;
 
         if (Input.GetButtonDown("Jump"))
         {
@@ -34,32 +37,26 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetButtonDown("Crouch"))
         {
-            crouch = true;
-            animator.SetBool("Crouch", true);
-
-            m_WallCheck.position = new Vector2(m_WallCheck.position.x, m_WallCheck.position.y - 0.4f);
-
-
-        } else if (Input.GetButtonUp("Crouch"))
-        {
-            crouch = false;
-            animator.SetBool("Crouch", false);
-
-            m_WallCheck.position = new Vector2(m_WallCheck.position.x, m_WallCheck.position.y + 0.4f);
+            PerformCrouch();
         }
     }
+
 
     void FixedUpdate()
     {
         //Move Character
         controller.Move(horizontalMove * Time.fixedDeltaTime, crouch, jump);
         jump = false;
+
+        //StartCoroutine("StopCrouch");
     }
+
 
     public void OnLanding()
     {
         animator.SetBool("Jump", false);
     }
+
 
     void OnCollisionEnter2D(Collision2D col)
     {
@@ -68,5 +65,25 @@ public class PlayerMovement : MonoBehaviour
             //Destroy(GameObject.Find("Player"));
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+    }
+
+    void PerformCrouch()
+    {
+        crouch = true;
+        animator.SetBool("Crouch", true);
+        movementSpeed = slideSpeed;
+
+        m_WallCheck.position = new Vector2(m_WallCheck.position.x, m_WallCheck.position.y - 0.4f);
+
+        StartCoroutine("StopCrouch");
+    }
+
+    IEnumerator StopCrouch()
+    {
+        yield return new WaitForSeconds(0.8f);
+        crouch = false;
+        animator.SetBool("Crouch", false);
+        movementSpeed = runSpeed;
+        m_WallCheck.position = new Vector2(m_WallCheck.position.x, m_WallCheck.position.y + 0.4f);
     }
 }
