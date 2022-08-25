@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
     const float slideSpeed = runSpeed * 1.75f;
     const float jumpSpeed = runSpeed * 1.5f;
     private float movementSpeed = runSpeed;
-    private float direction = 1f;
+    public float direction = 1f;
     const float k_WallCheckRadius = .1f;
 
     float horizontalMove = 0f;
