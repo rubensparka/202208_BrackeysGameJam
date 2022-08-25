@@ -9,10 +9,11 @@ public class PlayerMovement : MonoBehaviour
     public CharacterController2D controller;
     public Animator animator;
 
-    public static float runSpeed = 40f;
-    private float slideSpeed = runSpeed * 1.5f;
+    const float runSpeed = 40f;
+    const float slideSpeed = runSpeed * 1.75f;
+    const float jumpSpeed = runSpeed * 1.5f;
     private float movementSpeed = runSpeed;
-    public float direction = 1f;
+    private float direction = 1f;
     const float k_WallCheckRadius = .1f;
 
     float horizontalMove = 0f;
@@ -33,6 +34,8 @@ public class PlayerMovement : MonoBehaviour
         {
             jump = true;
             animator.SetBool("Jump", true);
+
+            movementSpeed = jumpSpeed;
         }
 
         if (Input.GetButtonDown("Crouch"))
@@ -55,6 +58,8 @@ public class PlayerMovement : MonoBehaviour
     public void OnLanding()
     {
         animator.SetBool("Jump", false);
+
+        movementSpeed = runSpeed;
     }
 
 
