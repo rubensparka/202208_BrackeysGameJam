@@ -8,6 +8,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform m_WallCheck;
     public CharacterController2D controller;
     public Animator animator;
+    public AudioSource source;
+
+    public AudioClip deathSound;
+    public AudioClip jumpSound;
+    public AudioClip landSound;
 
     const float runSpeed = 40f;
     const float slideSpeed = runSpeed * 1.75f;
@@ -34,8 +39,8 @@ public class PlayerMovement : MonoBehaviour
         {
             jump = true;
             animator.SetBool("Jump", true);
-
             movementSpeed = jumpSpeed;
+            source.PlayOneShot(jumpSound);
         }
 
         if (Input.GetButtonDown("Crouch"))
@@ -50,16 +55,14 @@ public class PlayerMovement : MonoBehaviour
         //Move Character
         controller.Move(horizontalMove * Time.fixedDeltaTime, crouch, jump);
         jump = false;
-
-        //StartCoroutine("StopCrouch");
     }
 
 
     public void OnLanding()
     {
-        animator.SetBool("Jump", false);
-
         movementSpeed = runSpeed;
+        source.PlayOneShot(landSound);
+        StartCoroutine("LandingAnimation");
     }
 
 
@@ -67,8 +70,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (col.gameObject.name == "Spikes")
         {
-            //Destroy(GameObject.Find("Player"));
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            StartCoroutine("RestartGame");
         }
     }
 
@@ -90,5 +92,20 @@ public class PlayerMovement : MonoBehaviour
         animator.SetBool("Crouch", false);
         movementSpeed = runSpeed;
         m_WallCheck.position = new Vector2(m_WallCheck.position.x, m_WallCheck.position.y + 0.4f);
+    }
+
+    IEnumerator RestartGame()
+    {
+        source.PlayOneShot(deathSound);
+        yield return new WaitForSeconds(0.2f);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    IEnumerator LandingAnimation()
+    {
+        animator.SetBool("Jump", false);
+        animator.SetBool("Fell", true);
+        yield return new WaitForSeconds(0.2f);
+        animator.SetBool("Fell", false);
     }
 }
